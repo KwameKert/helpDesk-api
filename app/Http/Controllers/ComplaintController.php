@@ -41,7 +41,7 @@ class ComplaintController extends Controller
     {
         //
         $data =  [
-            'cat_id' => $request->cat_id,
+            'category' => $request->category,
             'description' => $request->description,
             'status' => 'Pending',
             'index_no' => $request->indexNumber,
@@ -67,7 +67,7 @@ class ComplaintController extends Controller
         //
         $complaint =  DB::select( DB::raw(
             "  SELECT
-categories.`name`,
+complaints.`category`,
 complaints.index_no,
 complaints.`status`,
 complaints.description,
@@ -76,8 +76,8 @@ users.`name` AS studentName,
 complaints.created_at,
 complaints.response
 FROM
-categories
-INNER JOIN complaints ON categories.id = complaints.cat_id
+complaints
+
 INNER JOIN users ON complaints.index_no = users.index_no
 WHERE
 complaints.`id` =".$id.""));
@@ -141,14 +141,14 @@ complaints.`id` =".$id.""));
       
           $complaints = DB::select( DB::raw(
             "SELECT
-categories.`name` as category,
+complaints.`category`,
 complaints.`description`,
 complaints.`id`,
 complaints.`status`,
 complaints.`created_at`
 FROM
 complaints
-INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints.`index_no`=".$request->indexNumber." AND complaints.`status` <> 'Retracted'
+ WHERE complaints.`index_no`=".$request->indexNumber." AND complaints.`status` <> 'Retracted'
             ORDER BY complaints.`id` DESC"));
        // $complaints = Complaint::where('index_no',$request->indexNumber)->get();
           $response = [
@@ -165,7 +165,7 @@ INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints
     public function fetchPendingComplaint(){
 
         $all_complaints = DB::select(DB::raw("SELECT
-            categories.`name`,
+            complaints.`category`,
             complaints.`index_no`,
             complaints.`status`,
              complaints.`id`,
@@ -174,13 +174,12 @@ INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints
             users.`phone`,
             users.`name` as studentName
             FROM
-            categories
-            INNER JOIN complaints ON categories.`id` = complaints.`cat_id`
+            complaints
             INNER JOIN users ON complaints.`index_no` = users.`index_no`  ORDER BY complaints.id DESC
             "));
 
         $pending_complaints = DB::select(DB::raw("SELECT
-            categories.`name`,
+            complaints.`category`,
             complaints.`index_no`,
             complaints.`status`,
              complaints.`id`,
@@ -189,13 +188,12 @@ INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints
             users.`phone`,
             users.`name` as studentName
             FROM
-            categories
-            INNER JOIN complaints ON categories.`id` = complaints.`cat_id`
+            complaints
             INNER JOIN users ON complaints.`index_no` = users.`index_no` WHERE complaints.`status` = 'Pending' ORDER BY complaints.id DESC
             "));
 
          $processing_complaints = DB::select(DB::raw("SELECT
-            categories.`name`,
+            complaints.`category`,
             complaints.`index_no`,
             complaints.`status`,
              complaints.`id`,
@@ -204,13 +202,12 @@ INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints
             users.`phone`,
             users.`name` as studentName
             FROM
-            categories
-            INNER JOIN complaints ON categories.`id` = complaints.`cat_id`
+            complaints
             INNER JOIN users ON complaints.`index_no` = users.`index_no` WHERE complaints.`status` = 'Processing' ORDER BY complaints.id DESC
             "));
 
           $resolved_complaints = DB::select(DB::raw("SELECT
-            categories.`name`,
+            complaints.`category`,
             complaints.`index_no`,
             complaints.`id`,
             complaints.`status`,
@@ -218,9 +215,8 @@ INNER JOIN categories ON complaints.`cat_id` = categories.`id`  WHERE complaints
             complaints.`created_at`,
             users.`phone`,
             users.`name` as studentName
-            FROM
-            categories
-            INNER JOIN complaints ON categories.`id` = complaints.`cat_id`
+            FROM 
+            complaints
             INNER JOIN users ON complaints.`index_no` = users.`index_no` WHERE complaints.`status` = 'Resolved' ORDER BY complaints.id DESC
             "));
 

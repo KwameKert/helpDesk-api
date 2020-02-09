@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Complaint extends Model
 {
     //
-    protected $fillable = ['cat_id','respondent_id','description','index_no', 'status', 'response'];
+    protected $fillable = ['category','respondent_id','description','index_no', 'status', 'response'];
 }
